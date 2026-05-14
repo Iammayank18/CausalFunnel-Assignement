@@ -169,7 +169,7 @@ if (process.env.NODE_ENV !== 'production') {
     }
     vite.middlewares(req as any, res as any, next);
   });
-} else {
+} else if (!process.env.VERCEL) {
   const distPath = path.join(process.cwd(), 'dist');
   app.use(serveStatic(distPath));
   app.use((_req: MimiRequest, res: MimiResponse) => {
