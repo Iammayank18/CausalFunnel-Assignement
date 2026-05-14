@@ -5,8 +5,5 @@
   "functions": {
     "server.ts": {}
   },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/server" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/server.ts" }]
 }
