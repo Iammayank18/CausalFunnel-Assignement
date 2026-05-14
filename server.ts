@@ -3,7 +3,6 @@ import mimi, { json, serveStatic } from 'mimi.js';
 import type { MimiRequest, MimiResponse, NextFunction } from 'mimi.js';
 import { mongodbManager } from 'mimi.js';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { Event } from './models/Event';
 import { z } from 'zod';
 
@@ -159,6 +158,7 @@ app.get('/api/urls', async (_req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'production') {
+  const { createServer: createViteServer } = await import('vite');
   const vite = await createViteServer({
     server: { middlewareMode: true },
     appType: 'spa',
