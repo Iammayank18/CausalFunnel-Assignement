@@ -4,15 +4,15 @@
 A full-stack user analytics application that tracks user interactions (`page_view` and `click` events), stores them in MongoDB, and visualizes them through a React dashboard.
 
 ## Tech Stack
-- **Frontend:** React, Vite, TypeScript, CSS
+- **Frontend:** React, Vite, TypeScript, TailwindCSS v4
 - **Backend:** Node.js, TypeScript, `mimi.js` (equivalent to Express)
-- **Database:** MongoDB (using Mongoose for schemas and data modeling)
+- **Database:** MongoDB (Mongoose via Atlas)
 
 ## Setup Steps
-1. **Prerequisites:** Ensure you have Node.js and MongoDB installed and running locally.
-2. **Environment Variables:** Ensure your `.env` file contains your MongoDB URI:
+1. **Prerequisites:** Node.js and a MongoDB instance (local or Atlas).
+2. **Environment Variables:** Copy `.env.example` to `.env` and set your MongoDB URI:
    ```env
-   MONGO_URI=mongodb://localhost:27017/analytics
+   MONGO_URI=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/analytics
    PORT=3000
    ```
 3. **Install Dependencies:**
@@ -23,15 +23,43 @@ A full-stack user analytics application that tracks user interactions (`page_vie
    ```bash
    npm run dev
    ```
-   This will run `tsx watch server.ts` and start both the Node.js backend and the Vite frontend concurrently on `http://localhost:3000`.
+   Runs `tsx watch server.ts`, starting both the backend and the Vite frontend on `http://localhost:3000`.
 
 ## Using the Application
-1. **Open the Demo Page:** Navigate to [http://localhost:3000/demo.html](http://localhost:3000/demo.html)
-2. **Generate Traffic:** Click around the demo page to generate events. The tracking script (`tracker.js`) batches events and sends them to the backend API every 5 seconds (or upon page exit).
-3. **Open the Dashboard:** Navigate to [http://localhost:3000/](http://localhost:3000/) to view the generated sessions, dive into individual session timelines, and generate URL heatmaps.
+1. **Generate Traffic:** Open [http://localhost:3000/demo.html](http://localhost:3000/demo.html) and click around to generate events.
+2. **View Dashboard:** Open [http://localhost:3000/](http://localhost:3000/) to see sessions, session timelines, and URL heatmaps.
 
-## Architecture & Scalability
-Check out `architecture.md` (created in this directory) for an in-depth explanation of the scalability optimizations.
+## Deployment (Vercel)
+Both the frontend SPA and the API run on Vercel as a single project.
+
+### Required Steps
+1. Push the repository to GitHub and import it into Vercel.
+2. In the Vercel dashboard, set the **`MONGO_URI`** environment variable to your MongoDB Atlas connection string.
+3. Deploy — Vercel will:
+   - Build the frontend with `vite build` → outputs to `dist/`
+   - Compile `api/index.ts` as a serverless function at the `/api` route
+   - Route all `/api/*` requests to the serverless function
+   - Route everything else to `index.html` (SPA routing)
+
+The frontend makes API calls to the same origin (`/api/sessions`, `/api/urls`, etc.), so no `VITE_API_URL` is needed.
+
+## API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/health` | Health check — returns `{ status: 'ok' }` |
+| `POST` | `/api/events` | Accepts `{ events: [...] }` array of tracked events |
+| `GET` | `/api/sessions?page=1&limit=20` | Paginated session list |
+| `GET` | `/api/sessions/:sessionId/events` | All events for a session |
+| `GET` | `/api/heatmap?url=<encoded_url>` | Click data for a specific page URL |
+| `GET` | `/api/urls` | List of tracked URLs with click counts |
+
+## Embedding the Tracker
+To track a website, include the tracker script:
+```html
+<script src="https://your-domain.vercel.app/tracker.js" defer></script>
+```
+The script automatically batches `page_view` and `click` events and sends them to the API every 5 seconds (or on page exit via `navigator.sendBeacon`).
 
 ## Assumptions & Trade-offs
 - **Batching:** The client script uses a 5-second polling interval or `navigator.sendBeacon` to batch requests. This trades immediate real-time dashboard updates for significantly improved backend scalability and reduced network overhead.
