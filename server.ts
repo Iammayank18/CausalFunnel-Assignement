@@ -3,7 +3,7 @@ import mimi, { json, serveStatic } from 'mimi.js';
 import type { MimiRequest, MimiResponse, NextFunction } from 'mimi.js';
 import { mongodbManager } from 'mimi.js';
 import path from 'path';
-import { Event } from './models/Event';
+import { Event } from './models/Event.js';
 import { z } from 'zod';
 
 const EventSchemaZod = z.object({
