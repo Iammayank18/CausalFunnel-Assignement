@@ -177,15 +177,19 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-const server = app.listen(Number(process.env.PORT || 3000), () => {
-  console.log(`Server running on port ${process.env.PORT || 3000}`);
-});
+export { app };
 
-server.on('error', (err: NodeJS.ErrnoException) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`Port ${process.env.PORT || 3000} is already in use`);
-  } else {
-    console.error('Server error:', err);
-  }
-  process.exit(1);
-});
+if (!process.env.VERCEL) {
+  const server = app.listen(Number(process.env.PORT || 3000), () => {
+    console.log(`Server running on port ${process.env.PORT || 3000}`);
+  });
+
+  server.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${process.env.PORT || 3000} is already in use`);
+    } else {
+      console.error('Server error:', err);
+    }
+    process.exit(1);
+  });
+}
