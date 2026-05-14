@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
+
 export interface ClickData {
   x: number;
   y: number;
@@ -20,7 +22,7 @@ export interface HeatmapSummary {
 }
 
 export const fetchUrls = async (): Promise<HeatmapSummary[]> => {
-  const res = await fetch('/api/urls');
+  const res = await fetch(`${API_BASE}/api/urls`);
   if (!res.ok) throw new Error('Failed to fetch URLs');
   const data = await res.json();
   return data.map((d: HeatmapUrl) => ({
@@ -39,7 +41,7 @@ export function useUrls() {
 
 export const fetchHeatmapData = async (url: string): Promise<ClickData[]> => {
   if (!url) return [];
-  const res = await fetch(`/api/heatmap?url=${encodeURIComponent(url)}`);
+  const res = await fetch(`${API_BASE}/api/heatmap?url=${encodeURIComponent(url)}`);
   if (!res.ok) throw new Error('Failed to fetch heatmap data');
   return await res.json();
 };
