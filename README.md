@@ -3,6 +3,9 @@
 ## Overview
 A full-stack user analytics application that tracks user interactions (`page_view` and `click` events), stores them in MongoDB, and visualizes them through a React dashboard.
 
+## Demo
+https://drive.google.com/file/d/1g2sjd0RpOkFa5dDIxVvlRQrCpUUqOrD4/view?usp=sharing
+
 ## Tech Stack
 - **Frontend:** React, Vite, TypeScript, TailwindCSS v4
 - **Backend:** Node.js, TypeScript, `mimi.js` (equivalent to Express)
