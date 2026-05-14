@@ -55,14 +55,14 @@ app.use((req: MimiRequest, res: MimiResponse, next: NextFunction): void => {
 
 app.use(json());
 
-await mongodbManager
-  .connect(process.env.MONGO_URI!)
-  .then(() => {
-    console.log('MongoDB connected');
-  })
-  .catch(() => {
-    console.error('MongoDB not connected');
-  });
+if (!process.env.MONGO_URI) {
+  console.error('MONGO_URI is not set');
+} else {
+  await mongodbManager
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB connected'))
+    .catch((err: unknown) => console.error('MongoDB not connected', err));
+}
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
