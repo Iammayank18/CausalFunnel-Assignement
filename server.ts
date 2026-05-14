@@ -178,6 +178,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export { app };
+export default app;
 
 if (!process.env.VERCEL) {
   const server = app.listen(Number(process.env.PORT || 3000), () => {
